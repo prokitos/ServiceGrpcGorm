@@ -57,8 +57,25 @@ func CarShow(w *http.ResponseWriter, r *http.Request) {
 	curCar.Model = r.FormValue("model")
 	curCar.Year = r.FormValue("year")
 
+	var curSettings models.Searcher
+	curSettings.Sort = r.FormValue("sort")
+	curSettings.Offset = r.FormValue("offset")
+	curSettings.Limit = r.FormValue("limit")
+
+	// проверка что в offset,limit либо пустота либо числа.
+	if _, err := strconv.Atoi(curSettings.Offset); curSettings.Offset != "" && err != nil {
+		log.Debug("offset params couldn't convert to a number, offset = " + curSettings.Offset)
+		models.BadClientResponse400(w)
+		return
+	}
+	if _, err := strconv.Atoi(curSettings.Limit); curSettings.Limit != "" && err != nil {
+		log.Debug("limit params couldn't convert to a number, limit = " + curSettings.Limit)
+		models.BadClientResponse400(w)
+		return
+	}
+
 	// запрос к базе данных
-	dao.ShowData(w, &curCar)
+	dao.ShowData(w, &curCar, &curSettings)
 
 }
 

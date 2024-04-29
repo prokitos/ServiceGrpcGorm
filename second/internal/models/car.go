@@ -8,3 +8,9 @@ type Carer struct {
 	Model  string `json:"model" example:"tesla"`
 	Year   string `json:"year" example:""`
 }
+
+type Searcher struct {
+	Limit  string
+	Offset string
+	Sort   string
+}

@@ -6,6 +6,7 @@ import (
 	"module/internal/database"
 	"module/internal/models"
 	"net/http"
+	"strconv"
 )
 
 // Обновление записи
@@ -30,11 +31,28 @@ func UpdateData(w *http.ResponseWriter, curModel *models.Carer) {
 }
 
 // Показать записи
-func ShowData(w *http.ResponseWriter, curModel *models.Carer) {
+func ShowData(w *http.ResponseWriter, curModel *models.Carer, curSettings *models.Searcher) {
 
 	var finded []models.Carer
 
-	if result := database.GlobalHandler.DB.Limit(1).Offset(1).Find(&finded, curModel); result.Error != nil {
+	tempConstructor := database.GlobalHandler.DB
+
+	// добавление оффсета и лимита если указан
+	limit, err := strconv.Atoi(curSettings.Limit)
+	if err == nil {
+		tempConstructor = tempConstructor.Limit(limit)
+		fmt.Println("offset " + curSettings.Offset)
+	}
+	offset, err := strconv.Atoi(curSettings.Offset)
+	if err == nil {
+		tempConstructor = tempConstructor.Offset(offset)
+		fmt.Println("limit " + curSettings.Limit)
+	}
+
+	// добавление сортировки
+	//tempConstructor.Order("name")
+
+	if result := tempConstructor.Find(&finded, curModel); result.Error != nil {
 		fmt.Println(result.Error)
 	}
 
