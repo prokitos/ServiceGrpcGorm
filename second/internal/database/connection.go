@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"module/internal/models"
 	"os"
@@ -13,51 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// путь до .env миграций
+// путь до env файла
 var envConnvertion string = "internal/config/postgres.env"
-var migrationRoute string = "internal/database/migrations"
-
-// хранение соединения с базой данных
-var curDbRef *sql.DB
-
-// функция для получения базы данных из переменной
-func GetConnection() *sql.DB {
-	return curDbRef
-}
-
-// установка соединения с базой данных
-func ConnectToDb() {
-
-	godotenv.Load(envConnvertion)
-
-	envUser := os.Getenv("User")
-	envPass := os.Getenv("Pass")
-	envHost := os.Getenv("Host")
-	envPort := os.Getenv("Port")
-	envName := os.Getenv("Name")
-
-	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", envUser, envPass, envHost, envPort, envName)
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Error("database connection error")
-		log.Debug("there is not connection with database")
-		models.CheckError(err)
-	}
-
-	db.Begin()
-
-	curDbRef = db
-}
-
-func CloseConnectToDb() {
-	curDbRef.Close()
-}
-
-// получить адрес внешнего сервера
-func GetExternalRoutes(address *string) {
-	godotenv.Load(envConnvertion)
-	*address = os.Getenv("ExtAddress")
-}
 
 // начать миграцию
 func MigrateStart() {
@@ -65,6 +21,7 @@ func MigrateStart() {
 	GlobalHandler = New(db)
 }
 
+// глобальный открытый коннект
 var GlobalHandler Handler
 
 type Handler struct {
@@ -76,15 +33,24 @@ func New(db *gorm.DB) Handler {
 }
 
 func Init() *gorm.DB {
-	dbURL := "postgres://postgres:root@localhost:8092/postgres"
 
-	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+	// получение строки соединения с бд из env
+	godotenv.Load(envConnvertion)
+	envUser := os.Getenv("User")
+	envPass := os.Getenv("Pass")
+	envHost := os.Getenv("Host")
+	envPort := os.Getenv("Port")
+	envName := os.Getenv("Name")
+	connectStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", envUser, envPass, envHost, envPort, envName)
 
+	// открытие соединения
+	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	db.AutoMigrate(models.Carer{})
+	// миграция
+	db.AutoMigrate(models.Test_Car{})
 
 	return db
 }

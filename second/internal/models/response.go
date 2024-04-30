@@ -13,9 +13,9 @@ type GoodBasicResponse struct {
 
 // структура для вывода хорошего ответа с машиной
 type GoodAdvancedResponse struct {
-	Description string  `json:"description"        example:"description"`
-	Code        int     `json:"code"               example:"status"`
-	Cars        []Carer `json:"cars"               example:"...."`
+	Description string     `json:"description"        example:"description"`
+	Code        int        `json:"code"               example:"status"`
+	Cars        []Test_Car `json:"cars"               example:"...."`
 }
 
 // структура для вывода плохого ответа
@@ -59,7 +59,7 @@ func GoodResponse(w *http.ResponseWriter) {
 }
 
 // вывод что все прошло хорошо + показать машину
-func GoodShowResponse(w *http.ResponseWriter, resultCars *[]Carer) {
+func GoodShowResponse(w *http.ResponseWriter, resultCars *[]Test_Car) {
 	goodResp := GoodAdvancedResponse{
 		Description: "Ok",
 		Code:        200,

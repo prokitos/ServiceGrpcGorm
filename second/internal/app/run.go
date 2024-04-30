@@ -13,10 +13,6 @@ func RunApp() {
 	log.SetLevel(log.DebugLevel)
 	log.Info("the server is starting")
 
-	// подключение к базе данных и закрытие после закрытия приложения или краша.
-	database.ConnectToDb()
-	defer database.CloseConnectToDb()
-
 	// миграция и подключение к бд
 	go database.MigrateStart()
 

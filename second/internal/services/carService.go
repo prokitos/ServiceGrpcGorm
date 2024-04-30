@@ -15,11 +15,11 @@ import (
 func CarUpdate(w *http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := io.ReadAll(r.Body)
-	var curCar models.Carer
+	var curCar models.Test_Car
 	json.Unmarshal(reqBody, &curCar)
 
 	// если пользователь не ввёл айди изменяемой записи, то ошибка
-	if curCar.Id < 1 {
+	if curCar.Car_id < 1 {
 		log.Debug("don't correct id of updated car")
 		models.BadClientResponse400(w)
 		return
@@ -49,9 +49,9 @@ func CarDelete(w *http.ResponseWriter, r *http.Request) {
 // Показать записи
 func CarShow(w *http.ResponseWriter, r *http.Request) {
 
-	var curCar models.Carer
+	var curCar models.Test_Car
 	tempID := r.FormValue("id")
-	curCar.Id, _ = strconv.Atoi(tempID)
+	curCar.Car_id, _ = strconv.Atoi(tempID)
 	curCar.RegNum = r.FormValue("regNum")
 	curCar.Mark = r.FormValue("mark")
 	curCar.Model = r.FormValue("model")
@@ -83,7 +83,7 @@ func CarShow(w *http.ResponseWriter, r *http.Request) {
 func CarCreate(w *http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := io.ReadAll(r.Body)
-	var curCar models.Carer
+	var curCar models.Test_Car
 	json.Unmarshal(reqBody, &curCar)
 
 	// запрос к базе данных

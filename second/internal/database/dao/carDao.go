@@ -10,10 +10,10 @@ import (
 )
 
 // Обновление записи
-func UpdateData(w *http.ResponseWriter, curModel *models.Carer) {
+func UpdateData(w *http.ResponseWriter, curModel *models.Test_Car) {
 
-	var curCar models.Carer
-	id := curModel.Id
+	var curCar models.Test_Car
+	id := curModel.Car_id
 
 	if result := database.GlobalHandler.DB.First(&curCar, id); result.Error != nil {
 		fmt.Println(result.Error)
@@ -31,9 +31,9 @@ func UpdateData(w *http.ResponseWriter, curModel *models.Carer) {
 }
 
 // Показать записи
-func ShowData(w *http.ResponseWriter, curModel *models.Carer, curSettings *models.Searcher) {
+func ShowData(w *http.ResponseWriter, curModel *models.Test_Car, curSettings *models.Searcher) {
 
-	var finded []models.Carer
+	var finded []models.Test_Car
 
 	tempConstructor := database.GlobalHandler.DB
 
@@ -52,6 +52,9 @@ func ShowData(w *http.ResponseWriter, curModel *models.Carer, curSettings *model
 	// добавление сортировки
 	//tempConstructor.Order("name")
 
+	// подгрузка зависимостей. показывать машины и их владельцев
+	tempConstructor = tempConstructor.Preload("Owner")
+
 	if result := tempConstructor.Find(&finded, curModel); result.Error != nil {
 		fmt.Println(result.Error)
 	}
@@ -60,7 +63,19 @@ func ShowData(w *http.ResponseWriter, curModel *models.Carer, curSettings *model
 }
 
 // Создать новую запись
-func CreateData(w *http.ResponseWriter, curCar *models.Carer) {
+func CreateData(w *http.ResponseWriter, curCar *models.Test_Car) {
+
+	// покачто тестово сам добавляю владельцев
+	var curOnwer []models.Test_Owner
+	owner1 := models.Test_Owner{}
+	owner1.Name = "johan"
+	owner1.Surname = "newbies"
+	owner2 := models.Test_Owner{}
+	owner2.Name = "anton"
+	owner2.Surname = "gimov"
+	curOnwer = append(curOnwer, owner1)
+	curOnwer = append(curOnwer, owner2)
+	curCar.Owner = curOnwer
 
 	// Append to the Books table
 	if result := database.GlobalHandler.DB.Create(&curCar); result.Error != nil {
@@ -76,7 +91,7 @@ func CreateData(w *http.ResponseWriter, curCar *models.Carer) {
 // Удаление записи по айди
 func DeleteData(w *http.ResponseWriter, id string) {
 
-	var curCar models.Carer
+	var curCar models.Test_Car
 
 	if result := database.GlobalHandler.DB.First(&curCar, id); result.Error != nil {
 		fmt.Println(result.Error)
