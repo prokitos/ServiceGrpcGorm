@@ -66,16 +66,16 @@ func ShowData(w *http.ResponseWriter, curModel *models.Test_Car, curSettings *mo
 func CreateData(w *http.ResponseWriter, curCar *models.Test_Car) {
 
 	// покачто тестово сам добавляю владельцев
-	var curOnwer []models.Test_Owner
-	owner1 := models.Test_Owner{}
-	owner1.Name = "johan"
-	owner1.Surname = "newbies"
-	owner2 := models.Test_Owner{}
-	owner2.Name = "anton"
-	owner2.Surname = "gimov"
-	curOnwer = append(curOnwer, owner1)
-	curOnwer = append(curOnwer, owner2)
-	curCar.Owner = curOnwer
+	// var curOnwer []models.Test_Owner
+	// owner1 := models.Test_Owner{}
+	// owner1.Name = "johan"
+	// owner1.Surname = "newbies"
+	// owner2 := models.Test_Owner{}
+	// owner2.Name = "anton"
+	// owner2.Surname = "gimov"
+	// curOnwer = append(curOnwer, owner1)
+	// curOnwer = append(curOnwer, owner2)
+	// curCar.Owner = curOnwer
 
 	// Append to the Books table
 	if result := database.GlobalHandler.DB.Create(&curCar); result.Error != nil {
