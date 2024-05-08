@@ -44,7 +44,7 @@ func Init() *gorm.DB {
 	envName := os.Getenv("Name")
 	connectStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", envUser, envPass, envHost, envPort, envName)
 
-	// открытие соединения
+	// открытие соединения. его могут безопасно использовать несколько горутин. и вызывать опен нужно только один раз
 	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
@@ -56,9 +56,14 @@ func Init() *gorm.DB {
 		// control error
 	}
 
-	sqlDB.SetMaxIdleConns(5)
-	sqlDB.SetMaxOpenConns(8)
-	sqlDB.SetConnMaxLifetime(time.Minute)
+	sqlDB.SetMaxIdleConns(20)
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetConnMaxIdleTime(time.Minute * 10)
+	sqlDB.SetConnMaxLifetime(time.Minute * 10)
+
+	// sqlDB.SetMaxIdleConns(5)
+	// sqlDB.SetMaxOpenConns(10)
+	// sqlDB.SetConnMaxLifetime(time.Minute)
 
 	// миграция
 	db.AutoMigrate(models.Test_Car{})

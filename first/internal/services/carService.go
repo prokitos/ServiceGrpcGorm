@@ -128,15 +128,15 @@ func CreateDataTransaction(w *http.ResponseWriter, curCar *models.Test_Car) {
 		tempCar.RegNum = "xx100xx"
 		tempCar.Year = "2000"
 
-		var curOnwer []models.Test_Owner
-		owner1 := models.Test_Owner{}
-		owner1.Name = "johan"
-		owner1.Surname = "newbies"
-		curOnwer = append(curOnwer, owner1)
-		tempCar.Owner = curOnwer
+		// получение владельца машин с сервера
+		var allOnwer []models.Test_Owner
+		var owner1 models.Test_Owner
+		temp := sendToSecond()
+		json.Unmarshal(temp, &owner1)
 
-		// создать здесь типо подключение к внешнему серверу, и получать оттуда данные о владельце.
-		// если нет подключения к внешнему серверу то откат
+		allOnwer = append(allOnwer, owner1)
+		tempCar.Owner = allOnwer
+
 		time.Sleep(time.Second * 1)
 
 		// если нет соединения с базой то не добавлять ничего

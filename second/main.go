@@ -2,89 +2,59 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"math/rand"
 	"net/http"
-	"net/url"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
-var secureCode string = "gpq74gpq"
+var secureCode string = "gpt45"
 
 func main() {
-
-	log.SetLevel(log.DebugLevel)
 	serverStart()
-
 }
 
 // запуск сервера
 func serverStart() {
 
 	router := mux.NewRouter()
-	router.HandleFunc("/send", sendRoute).Methods(http.MethodGet)
+	router.HandleFunc("/getter", getterRoute).Methods(http.MethodPost)
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         ":8111",
+		Addr:         ":8112",
 		WriteTimeout: 5 * time.Second,
 		ReadTimeout:  5 * time.Second,
 	}
 	srv.ListenAndServe()
 }
 
-// подключение пути для обращения к серверу. GET, принимает имя
-func sendRoute(w http.ResponseWriter, r *http.Request) {
+// подключение пути для получения данных с 1 сервера
+func getterRoute(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
-	var user showUser
-	user.Name = r.FormValue("name")
-	dataEnrich(&user)
+	secret := r.FormValue("key")
 
-	// передача данных на второй сервер.
-	log.Info("send data to second server")
-	temp := sendToSecond(&user)
-	json.NewEncoder(w).Encode(temp)
-
-}
-
-// обогащение полученых данных
-func dataEnrich(curInstance *showUser) {
-	curInstance.Secure = secureCode
-	curInstance.Gender = "male"
-
-	rand.Seed(time.Now().UnixNano())
-	curInstance.Age = rand.Intn(100) + 1
-}
-
-// отправка данных на второй сервер
-func sendToSecond(curInstance *showUser) (result string) {
-
-	baseURL, _ := url.Parse("http://secondmicro:8112/getter")
-
-	data := url.Values{
-		"name":     {curInstance.Name},
-		"age":      {strconv.Itoa(curInstance.Age)},
-		"gender":   {curInstance.Gender},
-		"security": {curInstance.Secure},
+	if secret != secureCode {
+		log.Info("wrong secure code !!!")
+		json.NewEncoder(w).Encode("wrong code !!!!")
+		return
 	}
 
-	resp, _ := http.PostForm(baseURL.String(), data)
-	defer resp.Body.Close()
+	var user send_Owner
+	user.Name = "Anton"
+	user.Patronymic = "Igorevich"
+	user.Surname = "Pavlov"
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	return string(body)
-
+	json.NewEncoder(w).Encode(user)
 }
 
 // структура, с помощью которой идёт обмен внутри сервисов, и потом в базу
-type showUser struct {
-	Age    int    `json:"age" example:"25" format:"int64"`
-	Name   string `json:"name" example:"ivan"`
-	Gender string `json:"gender" example:"male"`
-	Secure string `json:"secure" example:"gp46gp"`
+type send_Owner struct {
+	Owner_id   int    `json:"id"`
+	Name       string `json:"name"`
+	Surname    string `json:"surname"`
+	Patronymic string `json:"patronymic"`
+	Secret     string `json:"key"`
 }
