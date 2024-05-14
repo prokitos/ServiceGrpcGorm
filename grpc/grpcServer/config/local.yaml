@@ -1,0 +1,6 @@
+env: "local"
+storage_path: "./localDB/DB.db"
+token_ttl: 1h
+grpc:
+  port: 40001
+  timeout: 5s
