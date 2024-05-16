@@ -16,5 +16,6 @@ func Register(gRPC *grpc.Server) {
 }
 
 func (s *serverApi) Register(ctx context.Context, req *generated.RegisterRequest) (*generated.RegisterResponse, error) {
-	panic("not implemented")
+	// panic("not implemented")
+	return &generated.RegisterResponse{UserId: 14643}, nil
 }

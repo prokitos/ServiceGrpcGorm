@@ -10,17 +10,19 @@ import (
 
 type App struct {
 	GRPCserver *grpc.Server
+	Port       int
 }
 
-func (a *App) NewServer() {
+func (a *App) NewServer(port int) {
 	gRPCserver := grpc.NewServer()
 	server.Register(gRPCserver)
 	a.GRPCserver = gRPCserver
+	a.Port = port
 }
 
 func (a *App) Run() error {
 
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", 888))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.Port))
 	if err != nil {
 		return fmt.Errorf("%s: %w", "run", err)
 	}

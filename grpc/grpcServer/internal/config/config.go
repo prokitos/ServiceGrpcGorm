@@ -31,6 +31,10 @@ func MustLoad() *Config {
 
 	path := FetchConfigPath()
 
+	if path == "" {
+		path = "config/local.yaml"
+	}
+
 	// если ничего не получили
 	if path == "" {
 		panic("empty path to config")
