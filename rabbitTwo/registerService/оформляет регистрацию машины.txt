@@ -1,0 +1,1 @@
+http://localhost:8888/car?name=ivan&surname=ivanov&regNum=x641yx&mark=lada

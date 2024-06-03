@@ -8,7 +8,6 @@ import (
 )
 
 func RunApp() {
-
 	// установка логов. установка чтобы показывать логи debug уровня
 	log.SetLevel(log.DebugLevel)
 	log.Info("the server is starting")
@@ -18,5 +17,4 @@ func RunApp() {
 
 	// запуск сервера. внутри указан порт 8888
 	server.MainServer()
-
 }
